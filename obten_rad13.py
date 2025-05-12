@@ -3,7 +3,7 @@ from netCDF4 import Dataset
 import numpy as np
 
 # Ruta del directorio que contiene los archivos .nc
-input_directory = './file'
+input_directory = './data'  # Cambia esto a la ruta de tu directorio
 output_directory = './extracted_variables'  # Directorio donde se guardarán las variables
 
 # Crear el directorio de salida si no existe
@@ -21,10 +21,10 @@ for file_name in os.listdir(input_directory):
             if 'Rad13' in dataset.variables.keys():
                 # Extraer los datos de la variable 'Rad13'
                 data = dataset.variables['Rad13'][:]
-                
+
                 # Convertir MaskedArray a un arreglo NumPy estándar
                 data = np.array(data)  # Esto elimina cualquier máscara asociada
-                
+
                 # Guardar los datos en un archivo .npy con el nombre del archivo de origen
                 output_file = os.path.join(output_directory, f"{file_name.replace('.nc', '_Rad13.npy')}")
                 np.save(output_file, data)
