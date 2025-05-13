@@ -3,7 +3,7 @@ from netCDF4 import Dataset
 import numpy as np
 
 # Ruta del directorio que contiene los archivos .nc
-input_directory = './data'  # Cambia esto a la ruta de tu directorio
+input_directory = './radiances_c'  # Cambia esto a la ruta de tu directorio
 output_directory = './extracted_variables'  # Directorio donde se guardarán las variables
 
 # Crear el directorio de salida si no existe
