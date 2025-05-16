@@ -2,3 +2,5 @@ rad13
 extracted_variables
 radiances_c
 ___pycache__
+utils
+rad13_sin_outliers
