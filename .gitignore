@@ -1,6 +1,8 @@
 rad13
 extracted_variables
 radiances_c
+rad13_sin_outliers
+rad13_outlier
 ___pycache__
 rad13_sin_outliers
 df_escalado.pkl
