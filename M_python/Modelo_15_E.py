@@ -111,10 +111,12 @@ def main():
     print(f"✅ Carga completada: {len(images)} imágenes")
 
     # Normalización
-    print("\nNormalizando imágenes...")
-    images = [(img - np.min(img)) / (np.max(img) - np.min(img) + 1e-8) for img in images]
+    # Normalización
+    all_pixels = np.concatenate([img.flatten() for img in images])
+    global_min, global_max = np.min(all_pixels), np.max(all_pixels)
+
+    images = [(img - global_min) / (global_max - global_min + 1e-8) for img in images]
     images = [np.clip(img, 0, 1) for img in images]
-    print("✅ Normalización completada")
 
     # Construir secuencias temporales
     print("\nConstruyendo secuencias temporales...")
@@ -463,21 +465,23 @@ def main():
     plt.show()
 
     # Directorio original y reducido para prueba
-    d_jun_1m = 'C:/Users/jhon.jaramilloe/Documents/bandas/13/jun_1m'
-
-    d_jun_1m_red =  'C:/Users/jhon.jaramilloe/Documents/bandas/13/jun_1m_red'
+    d_mar_01_15_2s = 'C:/Users/jhon.jaramilloe/Documents/bandas/13/mar_01_15_2s'
+    d_mar_01_15_2s_red =  'C:/Users/jhon.jaramilloe/Documents/bandas/13/mar_01_15_2s_red'
 
     # Llamar a la función para redimensionar imágenes
-    resize_npy_images(d_jun_1m, d_jun_1m_red, new_size=(480, 480))
+    resize_npy_images(d_mar_01_15_2s,d_mar_01_15_2s_red, new_size=(480, 480))
 
     # Cargar imágenes de prueba
-    file_list_test = sorted([f for f in os.listdir(d_jun_1m_red) if f.endswith('.npy')])
+    file_list_test = sorted([f for f in os.listdir(d_mar_01_15_2s_red) if f.endswith('.npy')])
     print(f"Procesando {len(file_list_test)} imágenes para validación")
 
-    images_test = [np.load(os.path.join(d_jun_1m_red, f)) for f in file_list_test]
+    images_test = [np.load(os.path.join(d_mar_01_15_2s_red, f)) for f in file_list_test]
 
-    # Normalización simple de imágenes de validación
-    images_test = [(img - np.min(img)) / (np.max(img) - np.min(img) + 1e-8) for img in images_test]
+    ### corregido
+    all_pixels_test = np.concatenate([img.flatten() for img in images_test])
+    global_min_test, global_max_test = np.min(all_pixels_test), np.max(all_pixels_test)
+
+    images_test = [(img - global_min_test) / (global_max_test - global_min_test + 1e-8) for img in images_test]
     images_test = [np.clip(img, 0, 1) for img in images_test]
 
     # Parámetro de secuencia temporal (debe ser el mismo que en entrenamiento)
