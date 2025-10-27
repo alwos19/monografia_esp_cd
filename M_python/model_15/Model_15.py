@@ -17,13 +17,94 @@ def main():
     from tensorflow.keras.optimizers import Adam
     from tensorflow.keras.regularizers import l2
     import matplotlib.pyplot as plt
+    # =====================================================
+    # NUEVO: IMPORTAR LIBRERÍAS DE LOGGING
+    # =====================================================
+    import logging
+    import datetime
+    import json
+    import csv
+
+    # =====================================================
+    # NUEVO: CONFIGURACIÓN DE LOGGING
+    # =====================================================
+    log_dir = "training_logs"
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(f"{log_dir}/modelo15_training_{timestamp}.log"),
+            logging.StreamHandler()
+        ]
+    )
+    logger = logging.getLogger()
+
+    csv_log_path = f"{log_dir}/modelo15_metrics_{timestamp}.csv"
+    json_log_path = f"{log_dir}/modelo15_results_{timestamp}.json"
+
+    # =====================================================
+    # NUEVO: CALLBACK PARA CSV LOGGER
+    # =====================================================
+    class CSVLoggerCallback(tf.keras.callbacks.Callback):
+        def __init__(self, filename):
+            super().__init__()
+            self.filename = filename
+            self.rows = []
+            
+        def on_epoch_end(self, epoch, logs=None):
+            if logs is None:
+                return
+                
+            row = {'epoch': epoch + 1}
+            row.update(logs)
+            self.rows.append(row)
+            
+            with open(self.filename, 'w', newline='') as f:
+                writer = csv.DictWriter(f, fieldnames=row.keys())
+                writer.writeheader()
+                writer.writerows(self.rows)
+
+    # =====================================================
+    # NUEVO: FUNCIÓN PARA GUARDAR RESULTADOS
+    # =====================================================
+    def save_training_results(history, model, timestamp):
+        results = {
+            'timestamp': timestamp,
+            'model_name': 'Modelo_15_E',
+            'training_parameters': {
+                'timesteps': 3,
+                'batch_size': 4,
+                'epochs': 50,
+                'initial_learning_rate': 1e-3
+            },
+            'final_metrics': {
+                'final_train_loss': history.history['loss'][-1],
+                'final_val_loss': history.history['val_loss'][-1],
+                'final_train_rmse': history.history['root_mean_squared_error'][-1],
+                'final_val_rmse': history.history['val_root_mean_squared_error'][-1],
+                'final_train_mape': history.history['mean_absolute_percentage_error'][-1],
+                'final_val_mape': history.history['val_mean_absolute_percentage_error'][-1],
+                'best_epoch': np.argmin(history.history['val_loss']) + 1
+            }
+        }
+        
+        with open(json_log_path, 'w') as f:
+            json.dump(results, f, indent=2)
+        
+        logger.info(f"Resultados guardados en: {json_log_path}")
+        return results
 
     # =====================================================
     # CONFIGURACIÓN DE RUTAS
     # =====================================================
 
-    d_original = 'C:/Users/jhon.jaramilloe/Documents/bandas/13/ene_may_5m'
-    d_reducida = 'C:/Users/jhon.jaramilloe/Documents/bandas/13/ene_may_5m_reducida'
+    d_original = '/home/smoke/bandas/banda13/ene_may_5m'
+    d_reducida = '/home/smoke/bandas/banda13/ene_may_5m_reducida'
 
     if not os.path.exists(d_reducida):
         os.makedirs(d_reducida)
@@ -34,6 +115,7 @@ def main():
 
     def resize_npy_images(d_original, d_reducida, new_size=(480, 480)):
         print(f"Redimensionando imágenes en {d_original}...")
+        logger.info(f"Redimensionando imágenes en {d_original}...")
 
         if not os.path.exists(d_reducida):
             os.makedirs(d_reducida)
@@ -49,6 +131,7 @@ def main():
                 processed_count += 1
 
         print(f"Procesadas {processed_count} imágenes")
+        logger.info(f"Procesadas {processed_count} imágenes")
         return processed_count
 
     def mostrar_resultados(X, y, y_pred, n=5, cmap='viridis',
@@ -85,19 +168,24 @@ def main():
     print("=" * 50)
     print("PREPROCESAMIENTO DE IMÁGENES")
     print("=" * 50)
+    logger.info("PREPROCESAMIENTO DE IMÁGENES")
 
     # Verificar y redimensionar imágenes si es necesario
     print("Verificando si necesitas redimensionar imágenes...")
+    logger.info("Verificando si necesitas redimensionar imágenes...")
     existing_files = len([f for f in os.listdir(d_reducida) if f.endswith('.npy')])
     if existing_files == 0:
         processed_count = resize_npy_images(d_original, d_reducida, new_size=(480, 480))
         print(f"✅ Redimensionadas {processed_count} imágenes")
+        logger.info(f"Redimensionadas {processed_count} imágenes")
     else:
         print(f"✅ Ya existen {existing_files} imágenes redimensionadas en {d_reducida}")
+        logger.info(f"Ya existen {existing_files} imágenes redimensionadas en {d_reducida}")
 
     # Cargar imágenes
     file_list = sorted([f for f in os.listdir(d_reducida) if f.endswith('.npy')])
     print(f"\nCargando {len(file_list)} imágenes desde {d_reducida}...")
+    logger.info(f"Cargando {len(file_list)} imágenes desde {d_reducida}...")
 
     images = []
     for i, filename in enumerate(file_list):
@@ -107,14 +195,12 @@ def main():
 
         if (i + 1) % 100 == 0:
             print(f"  Cargadas {i + 1}/{len(file_list)} imágenes...")
+            logger.info(f"Cargadas {i + 1}/{len(file_list)} imágenes...")
 
     print(f"✅ Carga completada: {len(images)} imágenes")
+    logger.info(f"Carga completada: {len(images)} imágenes")
 
     # Normalización
-<<<<<<< HEAD
-    # Normalización
-=======
->>>>>>> model15
     all_pixels = np.concatenate([img.flatten() for img in images])
     global_min, global_max = np.min(all_pixels), np.max(all_pixels)
 
@@ -123,6 +209,7 @@ def main():
 
     # Construir secuencias temporales
     print("\nConstruyendo secuencias temporales...")
+    logger.info("Construyendo secuencias temporales...")
     timesteps = 3
 
     X_base = np.array(images)[..., np.newaxis]
@@ -136,6 +223,7 @@ def main():
     print(f"   - Forma de X_seq: {X_seq.shape}")
     print(f"   - Forma de y_seq: {y_seq.shape}")
     print(f"   - Número de secuencias: {N_seq}")
+    logger.info(f"Secuencias creadas: Forma X_seq: {X_seq.shape}, Forma y_seq: {y_seq.shape}, Número de secuencias: {N_seq}")
 
     # =====================================================
     # MODELO
@@ -144,6 +232,7 @@ def main():
     print("\n" + "=" * 50)
     print("CONSTRUYENDO MODELO SIMPLIFICADO")
     print("=" * 50)
+    logger.info("CONSTRUYENDO MODELO SIMPLIFICADO")
 
     # Parámetros
     H, W, C = X_seq.shape[2], X_seq.shape[3], X_seq.shape[4]
@@ -286,6 +375,7 @@ def main():
     )
 
     print("✅ Modelo construido capa por capa:")
+    logger.info("Modelo construido capa por capa:")
     model15.summary()
 
     # =====================================================
@@ -303,11 +393,15 @@ def main():
             new_lr = min_lr + (initial_lr - min_lr) * cosine_decay
             return new_lr
 
+    # NUEVO: Agregar CSV Logger a los callbacks
+    csv_logger = CSVLoggerCallback(csv_log_path)
+
     callbacks = [
         EarlyStopping(monitor='val_loss', patience=15, restore_best_weights=True, verbose=1),
         ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=8, min_lr=1e-6, verbose=1),
         ModelCheckpoint(filepath="modelo15_best.h5", monitor="val_loss", save_best_only=True, mode="min", verbose=1),
-        LearningRateScheduler(cosine_decay_schedule, verbose=1)
+        LearningRateScheduler(cosine_decay_schedule, verbose=1),
+        csv_logger  # NUEVO: Callback para CSV
     ]
 
     # =====================================================
@@ -317,6 +411,7 @@ def main():
     print("\n" + "=" * 50)
     print("DIVISIÓN DE DATOS")
     print("=" * 50)
+    logger.info("DIVISIÓN DE DATOS")
 
     porc_validacion = 0.2
     split_index = int(len(X_seq) * (1 - porc_validacion))
@@ -327,6 +422,7 @@ def main():
     print(f"✅ Datos divididos:")
     print(f"   - Entrenamiento: {len(X_train)} muestras")
     print(f"   - Validación: {len(X_val)} muestras")
+    logger.info(f"Datos divididos: Entrenamiento: {len(X_train)} muestras, Validación: {len(X_val)} muestras")
 
     # =====================================================
     # ENTRENAMIENTO
@@ -335,6 +431,7 @@ def main():
     print("\n" + "=" * 50)
     print("INICIANDO ENTRENAMIENTO")
     print("=" * 50)
+    logger.info("INICIANDO ENTRENAMIENTO")
 
     history15 = model15.fit(
         X_train, y_train,
@@ -346,6 +443,12 @@ def main():
     )
 
     print("✅ ¡Entrenamiento completado!")
+    logger.info("¡Entrenamiento completado!")
+
+    # =====================================================
+    # NUEVO: GUARDAR RESULTADOS COMPLETOS
+    # =====================================================
+    save_training_results(history15, model15, timestamp)
 
     # =====================================================
     # RESULTADOS
@@ -354,6 +457,7 @@ def main():
     print("\n" + "=" * 50)
     print("RESULTADOS DEL ENTRENAMIENTO")
     print("=" * 50)
+    logger.info("RESULTADOS DEL ENTRENAMIENTO")
 
     final_train_loss = history15.history['loss'][-1]
     final_val_loss = history15.history['val_loss'][-1]
@@ -363,12 +467,14 @@ def main():
     print(f"   - Pérdida final entrenamiento: {final_train_loss:.4f}")
     print(f"   - Pérdida final validación: {final_val_loss:.4f}")
     print(f"   - Mejor época: {best_epoch}")
+    logger.info(f"Resultados finales - Train Loss: {final_train_loss:.4f}, Val Loss: {final_val_loss:.4f}, Mejor época: {best_epoch}")
 
     # =====================================================
     # VISUALIZACIÓN
     # =====================================================
 
     print("\nGenerando predicciones...")
+    logger.info("Generando predicciones...")
     y_pred = model15.predict(X_val[:10])
 
     mostrar_resultados(
@@ -404,6 +510,7 @@ def main():
     plt.show()
 
     print("\n🎯 ¡Proceso completado! Modelo guardado: modelo15_best.h5")
+    logger.info("¡Proceso completado! Modelo guardado: modelo15_best.h5")
 
 
     # Extraer métricas del historial (entrenamiento y validación)
@@ -425,6 +532,8 @@ def main():
     print(f"Entrenamiento - Loss final: {loss[-1]:.4f}, RMSE final: {rmse[-1]:.4f}, MAPE final: {mape[-1]:.4f}")
     print(f"Validación    - Loss final: {val_loss[-1]:.4f}, RMSE final: {val_rmse[-1]:.4f}, MAPE final: {val_mape[-1]:.4f}")
     print("=" * 50)
+    logger.info(f"RESUMEN - Train: Loss={loss[-1]:.4f}, RMSE={rmse[-1]:.4f}, MAPE={mape[-1]:.4f}")
+    logger.info(f"RESUMEN - Val: Loss={val_loss[-1]:.4f}, RMSE={val_rmse[-1]:.4f}, MAPE={val_mape[-1]:.4f}")
 
     # =============================================================================
     # VISUALIZACIÓN DE MÉTRICAS
@@ -477,6 +586,7 @@ def main():
     # Cargar imágenes de prueba
     file_list_test = sorted([f for f in os.listdir(d_mar_01_15_2s_red) if f.endswith('.npy')])
     print(f"Procesando {len(file_list_test)} imágenes para validación")
+    logger.info(f"Procesando {len(file_list_test)} imágenes para validación")
 
     images_test = [np.load(os.path.join(d_mar_01_15_2s_red, f)) for f in file_list_test]
 
@@ -500,12 +610,14 @@ def main():
 
     print(f"Forma de X_seq_test: {X_seq_test.shape}")  # (N_seq_test, timesteps, H, W, C)
     print(f"Forma de y_seq_test: {y_seq_test.shape}")  # (N_seq_test, H, W, C)
+    logger.info(f"Forma de X_seq_test: {X_seq_test.shape}, Forma de y_seq_test: {y_seq_test.shape}")
 
     # Ahora puedes evaluar el modelo
     loss, rmse, mape = model15.evaluate(X_seq_test, y_seq_test, verbose=1)
     print(f"Pérdida (MSE): {loss:.4f}")
     print(f"RMSE: {rmse:.4f}")
     print(f"MAPE: {mape:.4f}")
+    logger.info(f"Evaluación en prueba - Loss: {loss:.4f}, RMSE: {rmse:.4f}, MAPE: {mape:.4f}")
 
     y_pred15_test = model15.predict(X_seq_test)  # Genera las predicciones usando X_seq_val
     mostrar_resultados(
@@ -517,6 +629,19 @@ def main():
         xlabel="Ancho (px)",
         ylabel="Alto (px)"
     )
+
+    # NUEVO: Guardar resultados de prueba
+    test_results = {
+        'test_loss': float(loss),
+        'test_rmse': float(rmse),
+        'test_mape': float(mape),
+        'test_timestamp': timestamp
+    }
+    
+    with open(f"{log_dir}/modelo15_test_results_{timestamp}.json", 'w') as f:
+        json.dump(test_results, f, indent=2)
+    
+    logger.info(f"Resultados de prueba guardados en: {log_dir}/modelo15_test_results_{timestamp}.json")
 
 
 if __name__ == '__main__':
