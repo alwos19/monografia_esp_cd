@@ -129,8 +129,8 @@ def main():
     # CONFIGURACIÓN DE RUTAS
     # =====================================================
 
-    d_original = 'C:/Users/jhon.jaramilloe/Documents/bandas/13/ene_may_5m'
-    d_reducida = 'C:/Users/jhon.jaramilloe/Documents/bandas/13/ene_may_5m_reducida'
+    d_original = '/home/jhon/bandas/banda13/ene_may_5m'
+    d_reducida = '/home/jhon/bandas/banda13/ene_may_5m_reducida'
 
     if not os.path.exists(d_reducida):
         os.makedirs(d_reducida)
