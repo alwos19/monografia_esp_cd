@@ -7,3 +7,7 @@ python get_cut_compress.py --function=get_Rad --date_ini=2024-01-01-00:00 --date
 ## Organizar en un directorio las imágenes de la banda 13
 En una consola de Linux ejecutar el siguiente comando:
 python obten_rad13.py
+
+## Obtener imagenes validas de la banda 13 (eliminación de Outliers)
+Ejecutar el siguinete comando para que actives el script de python:
+#python clean_13.py
