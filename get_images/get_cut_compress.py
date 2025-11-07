@@ -34,7 +34,7 @@ def get_Rad(date_ini, date_fin):
     # Directorios de salida para los archivos de radiancia
     path_out = 'radiances/'
     path_out_c = 'radiances_c/'
-    canales = ['08', '09', '10', '13', '14']  # Bandas de interés
+    canales = ['09', '13']  # Bandas de interés
 
     # Crear directorios si no existen
     parent_dir = os.getcwd()

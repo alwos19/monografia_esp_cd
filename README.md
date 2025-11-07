@@ -1,13 +1,18 @@
-En este repositorio encontrarás una serie de scripts que son necesarios para la descarga de imágenes satelitales del GOES (Geostationary Operational Environmental Satellites). Estos scripts nos ayudarán a organizar las imágenes para obtener solo la banda 13 de cada hora, mes y año del 2024. Para llevar a cabo la ejecución de estos scripts, debes estar activo en un equipo con sistema operativo Linux, en este caso Ubuntu 22.04 LTS y tener el programa Python en su versión más reciente para la importación y ejecución de librerías.
+# Predicción del Movimiento de Nubes para contribuir a una mejor gestión de la operación en plantas de energía fotovoltaica en Colombia.
 
-## Descarga de imágenes y compresión de archivos
-En una consola de Linux ejecutar el siguiente comando:
-python get_cut_compress.py --function=get_Rad --date_ini=2024-01-01-00:00 --date_fin=2024-12-31-23:59
+Este repositorio contiene los scripts necesarios para descargar imágenes satelitales del GOES. Específicamente, incluye herramientas para obtener las bandas 9 y 13 de cada hora durante todo el año 2024. Los scripts de descarga se encuentran en el directorio get_images, donde también hay un script especial para igualar el número de archivos entre ambas bandas, requisito esencial para los modelos que entrenan con dos bandas simultáneamente. Todos requieren Python instalado para su ejecución. Además, en Analisis_Exploratorio encontrarás notebooks con el análisis preliminar, mientras que en conv2_Pruebas y Modelos están los desarrollos finales de deep learning.
 
-## Organizar en un directorio las imágenes de la banda 13
-En una consola de Linux ejecutar el siguiente comando:
-python obten_rad13.py
+## Descarga de imágenes y compresión de archivos de las bandas 9 y 13
+En una consola con ambiente python activo, ejecutar el siguiente comando:
+##### $ python get_cut_compress.py --function=get_Rad --date_ini=2024-01-01-00:00 --date_fin=2024-12-31-23:59
 
-## Obtener imagenes validas de la banda 13 (eliminación de Outliers)
-Ejecutar el siguinete comando para que actives el script de python:
-#python clean_13.py
+## Organizar en directorios diferentes las imagenes de las bandas 9 y 13
+En una consola con ambiente python ejecutar:
+##### $ python obten_rad13.py
+
+Luego para la banda 9:
+##### $ python obten_rad9.py
+
+## Obtener imagenes validas (eliminación de Outliers)
+Las imágenes del satélite GOES pueden contener errores que las hacen inutilizables para análisis y modelos de predicción. Para solucionarlo, hemos creado un script que filtra automáticamente las imágenes válidas. Este script identifica y conserva solo las imágenes con píxeles dentro del rango requerido, asegurando la calidad de los datos para el análisis exploratorio y el entrenamiento de modelos. Organizar las rutas de acuerdo a la necesidad. Ejecutar el siguiente ejemplo:
+##### $ python clean_outliers.py
