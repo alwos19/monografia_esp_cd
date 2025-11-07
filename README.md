@@ -14,5 +14,5 @@ Luego para la banda 9:
 ##### $ python obten_rad9.py
 
 ## Obtener imagenes validas (eliminación de Outliers)
-Las imágenes del satélite GOES pueden contener errores que las hacen inutilizables para análisis y modelos de predicción. Para solucionarlo, hemos creado un script que filtra automáticamente las imágenes válidas. Este script identifica y conserva solo las imágenes con píxeles dentro del rango requerido, asegurando la calidad de los datos para el análisis exploratorio y el entrenamiento de modelos. Organizar las rutas de acuerdo a la necesidad. Ejecutar el siguiente ejemplo:
+Las imágenes del satélite GOES pueden contener errores que las hacen inutilizables para análisis y modelos de predicción. Para solucionarlo, hemos creado un script que filtra automáticamente las imágenes válidas. Este script identifica y conserva solo las imágenes con píxeles dentro del rango requerido, asegurando la calidad de los datos para el análisis exploratorio y el entrenamiento de modelos. Organizar las rutas de acuerdo a la necesidad. Ejecutar el siguiente comando:
 ##### $ python clean_outliers.py
