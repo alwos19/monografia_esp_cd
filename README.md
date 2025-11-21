@@ -1,4 +1,4 @@
-# Predicción del Movimiento de Nubes para contribuir a una mejor gestión de la operación en plantas de energía fotovoltaica en Colombia.
+# Descarga, Procesamiento y Modelos Deep Learning para Bandas 9 y 13 del Satélite GOES
 
 Este repositorio contiene los scripts necesarios para descargar imágenes satelitales del GOES. Específicamente, incluye herramientas para obtener las bandas 9 y 13 de cada hora durante todo el año 2024. Los scripts de descarga se encuentran en el directorio get_images, donde también hay un script especial para igualar el número de archivos entre ambas bandas, requisito esencial para los modelos que entrenan con dos bandas simultáneamente. Todos requieren Python instalado para su ejecución. Además, en Analisis_Exploratorio encontrarás notebooks con el análisis preliminar, mientras que en conv2_Pruebas y Modelos están los desarrollos finales de deep learning.
 
