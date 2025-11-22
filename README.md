@@ -25,14 +25,17 @@ Paso 2: Crear entorno virtual:
  Con los siguientes scripts que se encuentran en el directorio **get_images** descargaras y limpiaras las imagenes con formato .npy de las bandas 9 y 13 para el año 2024.
 
 **#Descarga**
+
  (venv)$ python get_cut_compress.py --function=get_Rad --date_ini=2024-01-01-00:00 --date_fin=2024-12-31-23:59
 
 **#Separar bandas 9 y 13**
+
 (venv)$ python obten_rad13.py
 
 (venv)$ python obten_rad9.py
 
 **#Obtener imágenes validas**
+
 (venv)$ python clean_outliers.py
 
 ### Análisis Exploratorio 📋
