@@ -1,18 +1,61 @@
-# Descarga, Procesamiento y Modelos Deep Learning para Bandas 9 y 13 del Satélite GOES
+# Predicción del Movimiento de Nubes para contribuir a una mejor gestión de la operación de plantas de energía fotovoltaica en Colombia.
+Este proyecto aborda el desafío crítico de la **variabilidad en la generación de energía solar** en Colombia mediante el desarrollo de un sistema predictivo del movimiento de nubes utilizando **deep learning** e **imágenes satelitales GOES de la NASA**.
 
-Este repositorio contiene los scripts necesarios para descargar imágenes satelitales del GOES. Específicamente, incluye herramientas para obtener las bandas 9 y 13 de cada hora durante todo el año 2024 en el territorio colombiano. Los scripts de descarga se encuentran en el directorio get_images, donde también hay un script especial para igualar el número de archivos entre ambas bandas, requisito esencial para los modelos que entrenan con dos bandas simultáneamente. Todos requieren Python instalado para su ejecución. Además, en Analisis_Exploratorio encontrarás notebooks con el análisis preliminar, mientras que en Modelos están los desarrollos finales de deep learning.
+## Comenzando 🚀
+Estas instrucciones te permitirán obtener una copia del proyecto en funcionamiento en tu máquina local para propósitos de desarrollo y pruebas.
 
-## Descarga de imágenes y compresión de archivos de las bandas 9 y 13
-En una consola con ambiente python activo, ejecutar el siguiente comando:
-##### $ python get_cut_compress.py --function=get_Rad --date_ini=2024-01-01-00:00 --date_fin=2024-12-31-23:59
+### Pre-requisitos 📋
+- Python 3.8 o superior
+- 8GB de RAM mínimo (16GB recomendado)
+- 200GB de espacio libre para datasets
+- GPU con CUDA (opcional pero recomendado para entrenamiento)
 
-## Organizar en directorios diferentes las imagenes de las bandas 9 y 13
-En una consola con ambiente python ejecutar:
-##### $ python obten_rad13.py
+### Instalación 🔧
+Paso 1: Clonar el repositorio:
+##### $git clone https://github.com/alwos19/monografia_esp_cd.git**
 
-Luego para la banda 9:
-##### $ python obten_rad9.py
+Paso 2: Crear entorno virtual:
+##### $python -m venv venv
+#Linux
+##### $source venv/bin/activate
+#Windows 
+##### $venv\Scripts\activate
 
-## Obtener imagenes validas (eliminación de Outliers)
-Las imágenes del satélite GOES pueden contener errores que las hacen inutilizables para análisis y modelos de predicción. Para solucionarlo, hemos creado un script que filtra automáticamente las imágenes válidas. Este script identifica y conserva solo las imágenes con píxeles dentro del rango requerido, asegurando la calidad de los datos para el análisis exploratorio y el entrenamiento de modelos. Organizar las rutas de acuerdo a la necesidad. Ejecutar el siguiente comando:
-##### $ python clean_outliers.py
+### Ejecutando los Scripts ⚙️
+ Con los siguientes scripts que se encuentran en el directorio **get_images** descargaras y limpiaras las imagenes con formato .npy de las bandas 9 y 13 para el año 2024.
+
+**#Descarga**
+ (venv)$ python get_cut_compress.py --function=get_Rad --date_ini=2024-01-01-00:00 --date_fin=2024-12-31-23:59
+
+**#Separar bandas 9 y 13**
+(venv)$ python obten_rad13.py
+
+(venv)$ python obten_rad9.py
+
+**#Obtener imágenes validas**
+(venv)$ python clean_outliers.py
+
+### Análisis Exploratorio 📋
+El directorio **Analisis_Exploratorio** contiene el análisis estadístico de las bandas 9 y 13 mediante dos archivos .ipynb, incluyendo estadísticas descriptivas, caracterización de nubes y patrones temporales, para optimizar los datos destinados al entrenamiento de modelos de deep learning.
+
+### Ejecutando Modelos ⚙️
+El directorio **Modelos** contiene los cuadernos (.ipynb) con las arquitecturas de aprendizaje profundo implementadas, destacando los modelos CNN y ConvLSTM en versiones mono y multi-banda, cuyas celdas permiten ejecutar paso a paso el entrenamiento y evaluación para obtener los resultados finales.
+
+## Autores ✒️
+
+* **Estefanía Silva**
+* **Jhon Alejandro Jaramillo**
+
+## Expresiones de Gratitud 🎁
+
+Queremos agradecer a nuestro tutor, Julian David Arias Lonodoño, por su orientación constante y por impulsarnos a dar lo mejor de nosotros mismos en cada etapa de este proyecto.
+Nuestro reconocimiento a la Universidad de Antioquia por el acceso a los laboratorios de cómputo de alto rendimiento, sin los cuales el entrenamiento de los modelos  no habría sido posible. Así mismo, al tutor Esteban Silva Villa por darnos la idea de usar datos satelitales.
+A nuestros amigos y familiares, gracias por su paciencia y por comprendernos en los momentos de mayor presión. Este logro es también suyo.
+Por último, agradecemos la excelente dinámica de trabajo que logramos como equipo, basada en la confianza y el compromiso mutuo.
+
+
+
+
+
+
+
