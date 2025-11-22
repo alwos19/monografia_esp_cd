@@ -12,7 +12,7 @@ Estas instrucciones te permitirán obtener una copia del proyecto en funcionamie
 
 ### Instalación 🔧
 Paso 1: Clonar el repositorio:
-##### $git clone https://github.com/alwos19/monografia_esp_cd.git**
+##### $git clone https://github.com/alwos19/monografia_esp_cd.git
 
 Paso 2: Crear entorno virtual:
 ##### $python -m venv venv
