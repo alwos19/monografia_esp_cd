@@ -51,10 +51,7 @@ El directorio **Modelos** contiene los cuadernos (.ipynb) con las arquitecturas 
 
 ## Expresiones de Gratitud 🎁
 
-Queremos agradecer a nuestro tutor, Julian David Arias Lonodoño, por su orientación constante y por impulsarnos a dar lo mejor de nosotros mismos en cada etapa de este proyecto.
-Nuestro reconocimiento a la Universidad de Antioquia por el acceso a los laboratorios de cómputo de alto rendimiento, sin los cuales el entrenamiento de los modelos  no habría sido posible. Así mismo, al tutor Esteban Silva Villa por darnos la idea de usar datos satelitales.
-A nuestros amigos y familiares, gracias por su paciencia y por comprendernos en los momentos de mayor presión. Este logro es también suyo.
-Por último, agradecemos la excelente dinámica de trabajo que logramos como equipo, basada en la confianza y el compromiso mutuo.
+Queremos agradecer a la Universidad de Antioquia por el acceso a los laboratorios de cómputo de alto rendimiento, sin los cuales el entrenamiento de los modelos  no habría sido posible.
 
 
 
